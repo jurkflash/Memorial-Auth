@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Sso.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,5 +13,7 @@ namespace Sso.Data
             : base(options)
         {
         }
+
+        public DbSet<CCAIdentity> CCAIdentity { get; set; }
     }
 }

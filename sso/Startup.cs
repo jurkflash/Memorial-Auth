@@ -69,6 +69,16 @@ namespace Sso
             builder.AddDeveloperSigningCredential();
 
             services.AddTransient<IProfileService, ClaimsProfileService>();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 5;
+                options.Password.RequiredUniqueChars = 0;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -151,7 +161,7 @@ namespace Sso
                 var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<CCAIdentity>>();
 
-                if (!context.Users.Any(u => u.Email == "virexadmin@virbizevent.com"))
+                if (!context.Users.Any(u => u.Email == "admin@ccakjb.org.my"))
                 {
                     var user = new CCAIdentity
                     {
