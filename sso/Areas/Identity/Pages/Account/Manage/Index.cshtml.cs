@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace sso.Areas.Identity.Pages.Account.Manage
+namespace Sso.Areas.Identity.Pages.Account.Manage
 {
     public partial class IndexModel : PageModel
     {

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace sso.Data
+namespace Sso.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {

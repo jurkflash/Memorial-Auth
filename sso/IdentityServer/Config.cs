@@ -5,7 +5,7 @@
 using IdentityServer4.Models;
 using System.Collections.Generic;
 
-namespace sso
+namespace Sso
 {
     public static class Config
     {

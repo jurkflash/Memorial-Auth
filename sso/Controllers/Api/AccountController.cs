@@ -14,7 +14,7 @@ using System.Data;
 using System.Diagnostics.Metrics;
 using System.Security.Claims;
 
-namespace sso.Controllers.Api
+namespace Sso.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
