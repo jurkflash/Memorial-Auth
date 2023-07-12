@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Sso
@@ -74,6 +75,7 @@ namespace Sso
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             InitializeDatabase(app);
+            InitializeAdmin(app);
 
             if (env.IsDevelopment())
             {
@@ -138,6 +140,37 @@ namespace Sso
                         context.ApiScopes.Add(resource.ToEntity());
                     }
                     context.SaveChanges();
+                }
+            }
+        }
+
+        private void InitializeAdmin(IApplicationBuilder app)
+        {
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<CCAIdentity>>();
+
+                if (!context.Users.Any(u => u.Email == "virexadmin@virbizevent.com"))
+                {
+                    var user = new CCAIdentity
+                    {
+                        UserName = "admin",
+                        Email = "admin@ccakjb.org.my",
+                        EmailConfirmed = true,
+                        CreatedUtcDatetime = DateTime.UtcNow,
+                        LastModifiedUtcDateTime = DateTime.UtcNow,
+                    };
+
+                    var result = userManager.CreateAsync(user, "Admin").Result;
+
+                    if (result.Succeeded)
+                    {
+                        result = userManager.AddClaimsAsync(user, new List<Claim>
+                        {
+                            new Claim(ClaimTypes.Role, "Admin")
+                        }).Result;
+                    }
                 }
             }
         }
