@@ -13,12 +13,12 @@ namespace Sso
 {
     class ClaimsProfileService : IProfileService
     {
-        private readonly IUserClaimsPrincipalFactory<IdentityUser> _claimsFactory;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IUserClaimsPrincipalFactory<CCAIdentity> _claimsFactory;
+        private readonly UserManager<CCAIdentity> _userManager;
 
         public ClaimsProfileService(
-            UserManager<IdentityUser> userManager, 
-            IUserClaimsPrincipalFactory<IdentityUser> claimsFactory)
+            UserManager<CCAIdentity> userManager, 
+            IUserClaimsPrincipalFactory<CCAIdentity> claimsFactory)
         {
             _userManager = userManager;
             _claimsFactory = claimsFactory;

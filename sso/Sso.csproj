@@ -20,4 +20,10 @@
 	<PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Migrations\ApplicationDb\" />
+    <Folder Include="Data\Migrations\IdentityServer\ConfigurationDb\" />
+    <Folder Include="Data\Migrations\IdentityServer\PersistedGrantDb\" />
+  </ItemGroup>
+
 </Project>
