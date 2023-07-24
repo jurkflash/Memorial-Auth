@@ -44,11 +44,12 @@ namespace Sso.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [EmailAddress]
-            public string Email { get; set; }
+            [Display(Name = "用户 Username")]
+            public string Username { get; set; }
 
             [Required]
             [DataType(DataType.Password)]
+            [Display(Name = "密码 Password")]
             public string Password { get; set; }
 
             [Display(Name = "Remember me?")]
@@ -74,7 +75,7 @@ namespace Sso.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
+            returnUrl ??= "https://intranet.ccakjb.org.my";
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         
@@ -82,11 +83,11 @@ namespace Sso.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    return Redirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
                 {
