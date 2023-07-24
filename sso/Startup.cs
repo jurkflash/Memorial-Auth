@@ -11,11 +11,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Sso.Core;
 using Sso.Data;
 using Sso.Middlewares;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
@@ -72,12 +74,31 @@ namespace Sso
 
             services.Configure<IdentityOptions>(options =>
             {
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequiredLength = 5;
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 7;
                 options.Password.RequiredUniqueChars = 0;
+            });
+
+            services
+                // this is for the usual aspnetidentity login from web (e.g. /account/login)
+                .AddAuthentication()
+                // this is for server to server api calls (GrantTypes.ClientCredentials)
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = Configuration["IdentityServer:BaseUrl"];
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false
+                    };
+                });
+
+            // add authorizations service
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, "Admin"));
             });
         }
 
@@ -127,7 +148,7 @@ namespace Sso
                 context.Database.Migrate();
                 if (!context.Clients.Any())
                 {
-                    foreach (var client in Config.Clients)
+                    foreach (var client in Config.GetClients(Configuration))
                     {
                         context.Clients.Add(client.ToEntity());
                     }
