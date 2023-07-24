@@ -3,6 +3,7 @@
 
 
 using IdentityServer4.Models;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 
 namespace Sso
@@ -25,8 +26,13 @@ namespace Sso
                 new ApiScope("roles")
             };
 
-        public static IEnumerable<Client> Clients =>
-            new Client[]
+        public static IEnumerable<Client> GetClients(IConfiguration configuration)
+        {
+            var redirectUris = configuration.GetSection("IdentityServer:RedirectUris").Get<List<string>>();
+            var postLogoutRedirectUris = configuration.GetSection("IdentityServer:PostLogoutRedirectUris").Get<List<string>>();
+            var allowedCorsOrigins = configuration.GetSection("IdentityServer:AllowedCorsOrigins").Get<List<string>>();
+
+            return new[]
             {
                 // m2m client credentials flow client
                 new Client
@@ -42,14 +48,14 @@ namespace Sso
 
                 new Client
                 {
-                    ClientId = "webforms.owin.implicit",
-                    ClientName = "webform",
+                    ClientId = "owin.implicit",
+                    ClientName = "implicit",
 
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
-                    RedirectUris = { "http://localhost:8080/authorization-code/callback" },
-                    PostLogoutRedirectUris = { "http://localhost:8080" },
-
+                    RedirectUris = redirectUris,
+                    PostLogoutRedirectUris = postLogoutRedirectUris,
+                    AllowedCorsOrigins = allowedCorsOrigins,
                     AllowedScopes = { "openid", "profile", "email", "roles" }
                 },
 
@@ -67,7 +73,8 @@ namespace Sso
 
                     //AllowOfflineAccess = true,
                     AllowedScopes = { "openid", "profile", "frontend" }
-                },
+                }
             };
+        }
     }
 }
