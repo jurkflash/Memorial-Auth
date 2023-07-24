@@ -23,8 +23,11 @@ namespace Sso.Areas.Identity.Pages.Account
             _logger = logger;
         }
 
-        public void OnGet()
+        public async Task<IActionResult> OnGet()
         {
+            await _signInManager.SignOutAsync();
+            _logger.LogInformation("User logged out.");
+            return RedirectToPage("./Login");
         }
 
         public async Task<IActionResult> OnPost(string returnUrl = null)
@@ -37,7 +40,7 @@ namespace Sso.Areas.Identity.Pages.Account
             }
             else
             {
-                return RedirectToPage();
+                return RedirectToPage("./Login");
             }
         }
     }
