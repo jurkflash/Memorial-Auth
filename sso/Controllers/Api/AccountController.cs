@@ -33,7 +33,7 @@ namespace Sso.Controllers.Api
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateAccount(string username, string email, string password, string name, string userId, string role)
+        public async Task<IActionResult> CreateAccount([FromForm] string username, [FromForm] string email, [FromForm] string password, [FromForm] string name, [FromForm] string userId, [FromForm] string role)
         {
             var userInDb = await _userManager.FindByNameAsync(username);
 
@@ -72,7 +72,7 @@ namespace Sso.Controllers.Api
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteAccount(string username)
+        public async Task<IActionResult> DeleteAccount([FromForm] string username)
         {
             var userInDb = await _userManager.FindByNameAsync(username);
 
@@ -89,46 +89,11 @@ namespace Sso.Controllers.Api
             return NotFound();
         }
 
-        [Authorize]
-        [HttpPut("Password")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ChangePassword(string username, string oldPassword, string newPassword)
-        {
-            var userInDb = await _userManager.FindByNameAsync(username);
-
-            if (userInDb != null)
-            {
-                //get userid , if is admin proceed. else check if the userid belong to the username
-                var claims = await _userManager.GetClaimsAsync(userInDb);
-                var role = claims.Where(c => c.Type == ClaimTypes.Role).SingleOrDefault();
-                if(role.Value != "Admin")
-                {
-                    var userId = claims.Where(c => c.Type == "UserId").SingleOrDefault();
-                    if(userId.Value != GetCurrentUserId())
-                    {
-                        return BadRequest();
-                    }
-                }
-                
-                var result = await _userManager.ChangePasswordAsync(userInDb, UtilService.Decrypt(oldPassword), UtilService.Decrypt(newPassword));
-                
-                if (!result.Succeeded)
-                {
-                    return BadRequest(result.Errors.Select(a => a.Description));
-                }
-
-                return Ok();
-            }
-
-            return BadRequest("username not found");
-        }
-
         [Authorize(Policy = "Admin")]
         [HttpPut("Role")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ChangeRole(string username, string role)
+        public async Task<IActionResult> ChangeRole([FromForm] string username, [FromForm] string role)
         {
             var userInDb = await _userManager.FindByNameAsync(username);
 
