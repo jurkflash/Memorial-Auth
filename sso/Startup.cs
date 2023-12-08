@@ -193,7 +193,7 @@ namespace Sso
                         LastModifiedUtcDateTime = DateTime.UtcNow,
                     };
 
-                    var result = userManager.CreateAsync(user, "Admin").Result;
+                    var result = userManager.CreateAsync(user, "@Dmin^777").Result;
 
                     if (result.Succeeded)
                     {
